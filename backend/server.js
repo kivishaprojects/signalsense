@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const WebSocket = require('ws');
 
-const { pool, migrate } = require('./db/pool');
+const { migrate } = require('./db/pool');
 const { TrafficEngine } = require('./services/trafficEngine');
 const { router: apiRouter, setEngine } = require('./routes/api');
 const { JWT_SECRET } = require('./middleware/auth');
@@ -14,40 +14,32 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8080;
 
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
-
-// Serve frontend from backend/public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API routes
 app.use('/api', apiRouter);
 
-// Catch-all — serve index.html for any non-API route
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Not found' });
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// WebSocket server
+// WebSocket
 const wss = new WebSocket.Server({ server, path: '/ws' });
 const clients = new Set();
 
 wss.on('connection', (ws, req) => {
-  const url = new URL(req.url, `http://localhost`);
-  const token = url.searchParams.get('token');
-  if (token) {
-    try {
+  try {
+    const url = new URL(req.url, `http://localhost`);
+    const token = url.searchParams.get('token');
+    if (token) {
       const jwt = require('jsonwebtoken');
       ws.user = jwt.verify(token, JWT_SECRET);
-    } catch {
-      ws.close(1008, 'Invalid token');
-      return;
     }
-  }
+  } catch { ws.close(1008, 'Invalid token'); return; }
 
   clients.add(ws);
-  console.log(`[WS] Client connected (${clients.size} total)`);
 
   ws.on('message', msg => {
     try {
@@ -56,10 +48,13 @@ wss.on('connection', (ws, req) => {
     } catch {}
   });
 
-  ws.on('close', () => { clients.delete(ws); });
-  ws.on('error', () => { clients.delete(ws); });
+  ws.on('close', () => clients.delete(ws));
+  ws.on('error', () => clients.delete(ws));
 
-  if (engine) ws.send(JSON.stringify({ type: 'snapshot', payload: engine.snapshot() }));
+  // Send initial snapshot immediately on connect
+  if (engine) {
+    try { ws.send(JSON.stringify({ type: 'snapshot', payload: engine.snapshot() })); } catch {}
+  }
 });
 
 function broadcast(data) {
@@ -84,16 +79,18 @@ async function start() {
     setEngine(engine);
 
     setInterval(async () => {
-      const newAlerts = await engine.tick();
-      const snapshot = engine.snapshot();
-      broadcast({ type: 'snapshot', payload: snapshot });
-      if (newAlerts && newAlerts.length > 0) {
-        newAlerts.forEach(alert => broadcast({ type: 'alert', payload: alert }));
-      }
+      try {
+        const newAlerts = await engine.tick();
+        const snapshot = engine.snapshot();
+        broadcast({ type: 'snapshot', payload: snapshot });
+        if (newAlerts && newAlerts.length > 0) {
+          newAlerts.forEach(alert => broadcast({ type: 'alert', payload: alert }));
+        }
+      } catch (e) { console.error('[Engine tick error]', e.message); }
     }, TICK_MS);
 
     server.listen(PORT, () => {
-      console.log(`\n✅ SignalSense AI running on http://localhost:${PORT}`);
+      console.log(`\n✅ SignalSense AI v2 running on http://localhost:${PORT}`);
       console.log(`📡 WebSocket: ws://localhost:${PORT}/ws`);
       console.log(`🔑 Login: ${process.env.ADMIN_EMAIL || 'admin@signalsense.ai'}\n`);
     });

@@ -8,12 +8,11 @@
 </head>
 <body>
 <div class="app-shell" id="app" style="display:none">
-
-  <!-- Topbar -->
   <header class="topbar">
     <div class="topbar-brand">
-      <div class="signal-icon-sm"><span class="sr"></span><span class="sy"></span><span class="sg"></span></div>
+      <div class="sig-icon"><span class="sr"></span><span class="sy"></span><span class="sg"></span></div>
       <span class="brand-text">Signal<em>Sense</em> AI</span>
+      <span style="font-size:11px;color:var(--text3);padding:3px 8px;background:var(--bg3);border-radius:99px;border:1px solid var(--border);margin-left:6px" id="city-tag">—</span>
     </div>
     <div class="topbar-center">
       <div class="live-badge"><span class="live-pulse"></span>LIVE</div>
@@ -22,284 +21,269 @@
     <div class="topbar-right">
       <div class="conn-pill" id="conn-pill"><span class="conn-dot"></span><span>Connecting…</span></div>
       <div class="user-pill">
-        <div class="user-avatar" id="u-avatar">--</div>
-        <div><div class="user-name" id="u-name">…</div><div class="user-role" id="u-role">…</div></div>
+        <div class="user-avatar" id="u-av">--</div>
+        <div><div class="user-name" id="u-nm">…</div><div class="user-role" id="u-rl">…</div></div>
       </div>
-      <button class="btn btn-ghost btn-logout" onclick="logout()">Log out</button>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Log out</button>
     </div>
   </header>
 
-  <!-- Body -->
   <div class="app-body">
-
-    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Operations</div>
-        <button class="sidebar-item active" onclick="gotoView('overview')" id="nav-overview">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-          Overview
-        </button>
-        <button class="sidebar-item" onclick="gotoView('signals')" id="nav-signals">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-          Signal control
-        </button>
-        <button class="sidebar-item" onclick="gotoView('violations')" id="nav-violations">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Violations
-          <span class="badge badge-red" id="vio-count" style="margin-left:auto">0</span>
-        </button>
-        <button class="sidebar-item" onclick="gotoView('analytics')" id="nav-analytics">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Analytics
-        </button>
-        <button class="sidebar-item" onclick="gotoView('reports')" id="nav-reports">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Reports
-        </button>
+        <button class="sidebar-item active" onclick="gotoView('overview')" id="nav-overview">📊 Overview</button>
+        <button class="sidebar-item" onclick="gotoView('map')" id="nav-map">🗺️ Live map</button>
+        <button class="sidebar-item" onclick="gotoView('signals')" id="nav-signals">🚦 Signal control</button>
+        <button class="sidebar-item" onclick="gotoView('violations')" id="nav-violations">⚠️ Violations <span class="badge" id="vio-badge">0</span></button>
+        <button class="sidebar-item" onclick="gotoView('analytics')" id="nav-analytics">📈 Analytics</button>
+        <button class="sidebar-item" onclick="gotoView('reports')" id="nav-reports">📄 Reports</button>
       </div>
-
       <div class="sidebar-section" id="admin-nav" style="display:none">
-        <div class="sidebar-label">Administration</div>
-        <button class="sidebar-item" onclick="gotoView('junctions')" id="nav-junctions">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
-          Junctions
-        </button>
-        <button class="sidebar-item" onclick="gotoView('cameras')" id="nav-cameras">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-          Cameras
-        </button>
-        <button class="sidebar-item" onclick="gotoView('users')" id="nav-users">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-          Users
-        </button>
+        <div class="sidebar-label">Master data</div>
+        <button class="sidebar-item" onclick="gotoView('zones')" id="nav-zones">🏙️ Zones</button>
+        <button class="sidebar-item" onclick="gotoView('areas')" id="nav-areas">📍 Areas</button>
+        <button class="sidebar-item" onclick="gotoView('junctions')" id="nav-junctions">🔴 Junctions</button>
+        <button class="sidebar-item" onclick="gotoView('cameras')" id="nav-cameras">📹 Cameras</button>
+        <button class="sidebar-item" onclick="gotoView('timing')" id="nav-timing">⏱️ Signal timing</button>
+        <button class="sidebar-item" onclick="gotoView('users')" id="nav-users">👤 Users</button>
       </div>
-
       <div class="sidebar-section" id="superadmin-nav" style="display:none">
-        <div class="sidebar-label">Super Admin</div>
-        <button class="sidebar-item" onclick="gotoView('cities')" id="nav-cities">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Cities
-        </button>
-        <button class="sidebar-item" onclick="gotoView('licenses')" id="nav-licenses">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          License keys
-        </button>
+        <div class="sidebar-label">Super admin</div>
+        <button class="sidebar-item" onclick="gotoView('cities')" id="nav-cities">🏛️ Cities</button>
+        <button class="sidebar-item" onclick="gotoView('licenses')" id="nav-licenses">🔑 Licenses</button>
       </div>
     </nav>
 
-    <!-- Main content -->
     <main class="main-content">
 
-      <!-- ── OVERVIEW ──────────────────────────────────────────── -->
+      <!-- OVERVIEW -->
       <div id="view-overview" class="view active">
-        <div class="kpi-grid" id="kpi-row">
-          <div class="kpi"><div class="kpi-lbl">Vehicles today</div><div class="kpi-val blue" id="kpi-vehicles">—</div><div class="kpi-sub">↑ 8% vs yesterday</div></div>
-          <div class="kpi"><div class="kpi-lbl">Wait time saved</div><div class="kpi-val green">2.4 min</div><div class="kpi-sub">↑ 34% vs manual</div></div>
-          <div class="kpi"><div class="kpi-lbl">Active violations</div><div class="kpi-val red" id="kpi-vio">—</div><div class="kpi-sub">AI auto-detected</div></div>
-          <div class="kpi"><div class="kpi-lbl">Signal cycles</div><div class="kpi-val" id="kpi-cycles">—</div><div class="kpi-sub">AI optimised</div></div>
-          <div class="kpi"><div class="kpi-lbl">Active junctions</div><div class="kpi-val green" id="kpi-junctions">—</div><div class="kpi-sub">All systems</div></div>
+        <div class="kpi-row" id="kpi-row">
+          <div class="kpi"><div class="kpi-lbl">Vehicles today</div><div class="kpi-val blue" id="kpi-v">—</div><div class="kpi-sub">↑ 8% vs yesterday</div></div>
+          <div class="kpi"><div class="kpi-lbl">Time saved total</div><div class="kpi-val green" id="kpi-ts">—</div><div class="kpi-sub">vs fixed timers</div></div>
+          <div class="kpi"><div class="kpi-lbl">Empty road cycles</div><div class="kpi-val purple" id="kpi-er">—</div><div class="kpi-sub">AI reduced phase</div></div>
+          <div class="kpi"><div class="kpi-lbl">Violations</div><div class="kpi-val red" id="kpi-vio">—</div><div class="kpi-sub">AI detected</div></div>
+          <div class="kpi"><div class="kpi-lbl">Signal cycles</div><div class="kpi-val" id="kpi-cy">—</div><div class="kpi-sub">AI optimised</div></div>
+          <div class="kpi"><div class="kpi-lbl">Active junctions</div><div class="kpi-val green" id="kpi-j">—</div><div class="kpi-sub">All online</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 320px;gap:14px">
+
+        <!-- Zone cards -->
+        <div class="panel-title" style="margin-bottom:10px;font-weight:600">Zone overview</div>
+        <div class="zone-grid" id="zone-grid"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:14px">
           <div class="panel">
             <div class="panel-hdr"><span class="panel-title">Junction status</span><span style="font-size:11px;color:var(--text3)" id="last-tick">—</span></div>
             <div id="junction-list"></div>
           </div>
           <div>
-            <div class="panel" style="margin-bottom:14px">
+            <div class="panel" style="margin-bottom:12px">
               <div class="panel-hdr"><span class="panel-title">Live alerts</span><span class="badge badge-red" id="alert-badge">0</span></div>
-              <div id="alert-feed" style="max-height:280px;overflow-y:auto"><div class="empty-state"><div class="empty-icon">✅</div>Monitoring…</div></div>
+              <div id="alert-feed" style="max-height:260px;overflow-y:auto"><div class="empty-state" style="padding:16px;font-size:12px">Monitoring…</div></div>
             </div>
             <div class="panel">
               <div class="panel-hdr"><span class="panel-title">AI decisions</span></div>
-              <div id="decision-feed" style="max-height:200px;overflow-y:auto"><div class="empty-state" style="padding:16px;font-size:12px">Awaiting first cycle…</div></div>
+              <div id="decision-feed" style="max-height:180px;overflow-y:auto"><div class="empty-state" style="padding:12px;font-size:11px">Awaiting cycles…</div></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── SIGNAL CONTROL ─────────────────────────────────────── -->
+      <!-- MAP VIEW -->
+      <div id="view-map" class="view">
+        <div class="page-hdr"><div><div class="page-title">Live map</div><div class="page-sub">All junctions — click a dot for details</div></div></div>
+        <div id="map-container" aria-label="Live traffic junction map">
+          <div id="map-tooltip" class="map-tooltip" style="display:none"></div>
+          <svg id="map-roads" width="100%" height="100%" style="position:absolute;top:0;left:0"></svg>
+          <div id="map-dots"></div>
+          <div style="position:absolute;bottom:12px;left:12px;display:flex;gap:8px;font-size:11px">
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block"></span>Normal</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block"></span>Warning</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block"></span>Critical</span>
+          </div>
+        </div>
+        <div id="map-detail" style="margin-top:12px"></div>
+      </div>
+
+      <!-- SIGNAL CONTROL -->
       <div id="view-signals" class="view">
-        <div class="page-hdr"><div><div class="page-title">Signal control</div><div class="page-sub">Real-time AI signal management for all junctions</div></div></div>
+        <div class="page-hdr">
+          <div><div class="page-title">Signal control</div><div class="page-sub">AI-managed signal phases — admin sets min/max, AI decides within bounds</div></div>
+          <div class="filter-bar">
+            <select id="sig-zone-filter" onchange="filterSignals()"><option value="">All zones</option></select>
+          </div>
+        </div>
         <div class="sig-grid" id="sig-grid"></div>
       </div>
 
-      <!-- ── VIOLATIONS ─────────────────────────────────────────── -->
+      <!-- VIOLATIONS -->
       <div id="view-violations" class="view">
         <div class="page-hdr">
-          <div><div class="page-title">Violations log</div><div class="page-sub">AI-detected safety violations</div></div>
-          <div style="display:flex;gap:8px">
-            <select class="form-input" id="vio-type-filter" onchange="filterVio()" style="width:160px">
-              <option value="">All types</option>
-              <option value="red_jump">Red light jump</option>
-              <option value="no_helmet">No helmet</option>
-              <option value="speeding">Speeding</option>
-              <option value="wrong_lane">Wrong lane</option>
-              <option value="no_seatbelt">No seatbelt</option>
-              <option value="illegal_park">Illegal parking</option>
-              <option value="triple_ride">Triple riding</option>
-            </select>
-            <select class="form-input" id="vio-sev-filter" onchange="filterVio()" style="width:130px">
-              <option value="">All severity</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
+          <div><div class="page-title">Violations</div></div>
+          <div class="filter-bar">
+            <select id="vf-zone" onchange="filterVio()"><option value="">All zones</option></select>
+            <select id="vf-type" onchange="filterVio()"><option value="">All types</option><option value="red_jump">Red light jump</option><option value="no_helmet">No helmet</option><option value="speeding">Speeding</option><option value="wrong_lane">Wrong lane</option><option value="no_seatbelt">No seatbelt</option><option value="illegal_park">Illegal parking</option><option value="triple_ride">Triple riding</option></select>
+            <select id="vf-sev" onchange="filterVio()"><option value="">All severity</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
           </div>
         </div>
-        <div class="panel" style="padding:0">
-          <table class="tbl">
-            <thead><tr><th>Time</th><th>Junction</th><th>Violation</th><th>Severity</th><th>Plate</th><th>Camera</th><th>Status</th><th></th></tr></thead>
-            <tbody id="vio-tbody"></tbody>
-          </table>
-        </div>
+        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Time</th><th>Zone</th><th>Junction</th><th>Violation</th><th>Severity</th><th>Plate</th><th>Status</th><th></th></tr></thead><tbody id="vio-tbody"></tbody></table></div>
       </div>
 
-      <!-- ── ANALYTICS ──────────────────────────────────────────── -->
+      <!-- ANALYTICS -->
       <div id="view-analytics" class="view">
         <div class="page-hdr"><div class="page-title">Analytics</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <div class="panel"><div class="panel-hdr"><span class="panel-title">Vehicle flow by arm</span></div><div class="panel-body"><canvas id="ch-flow" height="180"></canvas></div></div>
+          <div class="panel"><div class="panel-hdr"><span class="panel-title">Vehicle flow — current junction</span></div><div class="panel-body"><canvas id="ch-flow" height="180"></canvas></div></div>
           <div class="panel"><div class="panel-hdr"><span class="panel-title">Violations by type</span></div><div class="panel-body"><canvas id="ch-vio" height="180"></canvas></div></div>
-          <div class="panel"><div class="panel-hdr"><span class="panel-title">AI vs manual wait time (min)</span></div><div class="panel-body"><canvas id="ch-cmp" height="180"></canvas></div></div>
-          <div class="panel"><div class="panel-hdr"><span class="panel-title">Hourly traffic density</span></div><div class="panel-body"><canvas id="ch-hr" height="180"></canvas></div></div>
+          <div class="panel"><div class="panel-hdr"><span class="panel-title">AI phase vs fixed timer comparison</span></div><div class="panel-body"><canvas id="ch-cmp" height="180"></canvas></div></div>
+          <div class="panel"><div class="panel-hdr"><span class="panel-title">Empty road detection by hour</span></div><div class="panel-body"><canvas id="ch-empty" height="180"></canvas></div></div>
         </div>
       </div>
 
-      <!-- ── REPORTS ────────────────────────────────────────────── -->
+      <!-- REPORTS -->
       <div id="view-reports" class="view">
         <div class="page-hdr"><div class="page-title">Reports</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <div class="panel">
-            <div class="panel-hdr"><span class="panel-title">PDF report</span></div>
-            <div class="panel-body">
-              <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Generate a full PDF analytics report for a date range.</p>
-              <div class="form-row" style="margin-bottom:14px">
-                <div class="form-group" style="margin:0"><label class="form-label">From</label><input type="date" class="form-input" id="pdf-from"></div>
-                <div class="form-group" style="margin:0"><label class="form-label">To</label><input type="date" class="form-input" id="pdf-to"></div>
-              </div>
-              <button class="btn btn-primary" onclick="downloadReport('pdf')">📄 Download PDF report</button>
+          <div class="panel"><div class="panel-hdr"><span class="panel-title">Export violations CSV</span></div><div class="panel-body">
+            <div class="form-row" style="margin-bottom:12px">
+              <div class="form-group" style="margin:0"><label class="form-label">From</label><input type="date" class="form-input" id="vio-from"></div>
+              <div class="form-group" style="margin:0"><label class="form-label">To</label><input type="date" class="form-input" id="vio-to"></div>
             </div>
-          </div>
-          <div class="panel">
-            <div class="panel-hdr"><span class="panel-title">CSV export</span></div>
-            <div class="panel-body">
-              <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Export raw data as CSV for analysis in Excel or Google Sheets.</p>
-              <div class="form-row" style="margin-bottom:14px">
-                <div class="form-group" style="margin:0"><label class="form-label">From</label><input type="date" class="form-input" id="csv-from"></div>
-                <div class="form-group" style="margin:0"><label class="form-label">To</label><input type="date" class="form-input" id="csv-to"></div>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="btn btn-ghost" onclick="downloadReport('csv','violations')">⚠️ Violations CSV</button>
-                <button class="btn btn-ghost" onclick="downloadReport('csv','signals')">🚦 Signal log CSV</button>
-              </div>
+            <button class="btn btn-primary" onclick="dlCSV('violations')">⬇️ Download violations CSV</button>
+          </div></div>
+          <div class="panel"><div class="panel-hdr"><span class="panel-title">Export signal log CSV</span></div><div class="panel-body">
+            <div class="form-row" style="margin-bottom:12px">
+              <div class="form-group" style="margin:0"><label class="form-label">From</label><input type="date" class="form-input" id="sig-from"></div>
+              <div class="form-group" style="margin:0"><label class="form-label">To</label><input type="date" class="form-input" id="sig-to"></div>
             </div>
-          </div>
+            <button class="btn btn-primary" onclick="dlCSV('signals')">⬇️ Download signal log CSV</button>
+          </div></div>
         </div>
       </div>
 
-      <!-- ── JUNCTIONS (admin) ──────────────────────────────────── -->
+      <!-- ZONES -->
+      <div id="view-zones" class="view">
+        <div class="page-hdr"><div><div class="page-title">Zone master</div><div class="page-sub">City → Zone level</div></div><button class="btn btn-primary" onclick="openModal('modal-zone')">+ Add zone</button></div>
+        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Code</th><th>Name</th><th>Areas</th><th>Junctions</th><th>Status</th><th></th></tr></thead><tbody id="zones-tbody"></tbody></table></div>
+      </div>
+
+      <!-- AREAS -->
+      <div id="view-areas" class="view">
+        <div class="page-hdr"><div><div class="page-title">Area master</div><div class="page-sub">Zone → Area level</div></div><button class="btn btn-primary" onclick="openModal('modal-area')">+ Add area</button></div>
+        <div class="filter-bar"><select id="area-zone-filter" onchange="loadAreas()"><option value="">All zones</option></select></div>
+        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Code</th><th>Name</th><th>Zone</th><th>Junctions</th><th>Status</th><th></th></tr></thead><tbody id="areas-tbody"></tbody></table></div>
+      </div>
+
+      <!-- JUNCTIONS -->
       <div id="view-junctions" class="view">
-        <div class="page-hdr">
-          <div><div class="page-title">Junctions</div></div>
-          <button class="btn btn-primary" onclick="openModal('modal-junction')">+ Add junction</button>
+        <div class="page-hdr"><div><div class="page-title">Junction master</div><div class="page-sub">Area → Junction level · Set AI timing bounds here</div></div><button class="btn btn-primary" onclick="openModal('modal-junction')">+ Add junction</button></div>
+        <div class="filter-bar">
+          <select id="junc-zone-filter" onchange="loadJunctions()"><option value="">All zones</option></select>
+          <select id="junc-area-filter" onchange="loadJunctions()"><option value="">All areas</option></select>
         </div>
-        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Code</th><th>Name</th><th>Location</th><th>Camera mode</th><th>Status</th><th>AI</th><th></th></tr></thead><tbody id="junctions-tbody"></tbody></table></div>
+        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Code</th><th>Name</th><th>Zone / Area</th><th>Min phase</th><th>Max phase</th><th>Mode</th><th>AI</th><th>Status</th><th></th></tr></thead><tbody id="junctions-tbody"></tbody></table></div>
       </div>
 
-      <!-- ── CAMERAS (admin) ────────────────────────────────────── -->
+      <!-- CAMERAS -->
       <div id="view-cameras" class="view">
-        <div class="page-hdr">
-          <div><div class="page-title">Cameras</div></div>
-          <button class="btn btn-primary" onclick="openModal('modal-camera')">+ Add camera</button>
-        </div>
+        <div class="page-hdr"><div><div class="page-title">Camera master</div><div class="page-sub">Junction → Camera · Set RTSP URLs for live feeds</div></div><button class="btn btn-primary" onclick="openModal('modal-camera')">+ Add camera</button></div>
+        <div class="filter-bar"><select id="cam-junc-filter" onchange="loadCameras()"><option value="">All junctions</option></select></div>
         <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Code</th><th>Junction</th><th>Arm</th><th>Resolution</th><th>RTSP URL</th><th>Status</th><th></th></tr></thead><tbody id="cameras-tbody"></tbody></table></div>
       </div>
 
-      <!-- ── USERS (admin) ──────────────────────────────────────── -->
+      <!-- SIGNAL TIMING -->
+      <div id="view-timing" class="view">
+        <div class="page-hdr"><div><div class="page-title">Signal timing profiles</div><div class="page-sub">Peak / off-peak / night phase bounds per junction</div></div><button class="btn btn-primary" onclick="openModal('modal-timing')">+ Add profile</button></div>
+        <div class="filter-bar"><select id="timing-junc-filter" onchange="loadTiming()"><option value="">Select junction</option></select></div>
+        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Junction</th><th>Profile</th><th>Hours</th><th>Min phase</th><th>Max phase</th><th>Active</th><th></th></tr></thead><tbody id="timing-tbody"></tbody></table></div>
+      </div>
+
+      <!-- USERS -->
       <div id="view-users" class="view">
-        <div class="page-hdr">
-          <div><div class="page-title">Users</div></div>
-          <button class="btn btn-primary" onclick="openModal('modal-user')">+ Add user</button>
-        </div>
+        <div class="page-hdr"><div><div class="page-title">User master</div></div><button class="btn btn-primary" onclick="openModal('modal-user')">+ Add user</button></div>
         <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last login</th><th></th></tr></thead><tbody id="users-tbody"></tbody></table></div>
       </div>
 
-      <!-- ── CITIES (superadmin) ────────────────────────────────── -->
+      <!-- CITIES -->
       <div id="view-cities" class="view">
-        <div class="page-hdr">
-          <div><div class="page-title">Cities</div></div>
-          <button class="btn btn-primary" onclick="openModal('modal-city')">+ Add city</button>
-        </div>
-        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Name</th><th>State</th><th>Plan</th><th>Status</th><th>Junctions</th><th>Users</th><th></th></tr></thead><tbody id="cities-tbody"></tbody></table></div>
+        <div class="page-hdr"><div><div class="page-title">City master</div></div><button class="btn btn-primary" onclick="openModal('modal-city')">+ Add city</button></div>
+        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>Name</th><th>State</th><th>Plan</th><th>Zones</th><th>Junctions</th><th>Status</th><th></th></tr></thead><tbody id="cities-tbody"></tbody></table></div>
       </div>
 
-      <!-- ── LICENSE KEYS (superadmin) ─────────────────────────── -->
+      <!-- LICENSES -->
       <div id="view-licenses" class="view">
-        <div class="page-hdr">
-          <div><div class="page-title">License keys</div></div>
-          <button class="btn btn-primary" onclick="openModal('modal-license')">+ Generate key</button>
-        </div>
-        <div id="new-key-display" style="display:none" class="panel">
-          <div class="panel-hdr"><span class="panel-title">New license key generated</span></div>
-          <div class="panel-body">
-            <div class="key-display" id="new-key-text">—</div>
-            <p style="font-size:12px;color:var(--text3)">Copy this key and provide it to the city admin. It will not be shown again in plain form.</p>
-          </div>
-        </div>
-        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>License key</th><th>City</th><th>Plan</th><th>Status</th><th>Expires</th><th>Junctions</th><th></th></tr></thead><tbody id="licenses-tbody"></tbody></table></div>
+        <div class="page-hdr"><div><div class="page-title">License keys</div></div><button class="btn btn-primary" onclick="openModal('modal-license')">+ Generate key</button></div>
+        <div id="new-key-box" style="display:none" class="panel"><div class="panel-hdr"><span class="panel-title">New key generated</span></div><div class="panel-body"><div class="key-display" id="new-key-text">—</div><p style="font-size:12px;color:var(--text3)">Copy now — provide to city admin for activation.</p></div></div>
+        <div class="panel" style="padding:0"><table class="tbl"><thead><tr><th>License key</th><th>City</th><th>Plan</th><th>Status</th><th>Expires</th><th>Max junctions</th><th></th></tr></thead><tbody id="licenses-tbody"></tbody></table></div>
       </div>
 
     </main>
   </div>
 </div>
 
-<!-- Modals -->
-<div class="modal-overlay" id="modal-junction">
-  <div class="modal"><div class="modal-title">Add junction</div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Code</label><input class="form-input" id="j-code" placeholder="BPL-001"></div><div class="form-group"><label class="form-label">Name</label><input class="form-input" id="j-name" placeholder="MG Road × DB Mall"></div></div>
-    <div class="form-group"><label class="form-label">Location</label><input class="form-input" id="j-location" placeholder="MG Road, Bhopal"></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Camera mode</label><select class="form-input" id="j-mode"><option value="simulation">Simulation</option><option value="rtsp">RTSP (live cameras)</option></select></div><div class="form-group"><label class="form-label">Latitude</label><input class="form-input" id="j-lat" type="number" step="0.0001" placeholder="23.2340"></div></div>
-    <div class="form-group"><label class="form-label">Longitude</label><input class="form-input" id="j-lng" type="number" step="0.0001" placeholder="77.4340"></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-junction')">Cancel</button><button class="btn btn-primary" onclick="saveJunction()">Add junction</button></div>
-  </div>
-</div>
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-zone"><div class="modal"><div class="modal-title">Add zone</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Zone name</label><input class="form-input" id="z-name" placeholder="North Zone"></div><div class="form-group"><label class="form-label">Code</label><input class="form-input" id="z-code" placeholder="NORTH"></div></div>
+  <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="z-desc" placeholder="Optional description"></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-zone')">Cancel</button><button class="btn btn-primary" onclick="saveZone()">Add zone</button></div>
+</div></div>
 
-<div class="modal-overlay" id="modal-camera">
-  <div class="modal"><div class="modal-title">Add camera</div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Junction</label><select class="form-input" id="c-junction"></select></div><div class="form-group"><label class="form-label">Arm</label><select class="form-input" id="c-arm"><option>North</option><option>South</option><option>East</option><option>West</option></select></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Code</label><input class="form-input" id="c-code" placeholder="BPL-001-CAM-N"></div><div class="form-group"><label class="form-label">Label</label><input class="form-input" id="c-label" placeholder="Camera North"></div></div>
-    <div class="form-group"><label class="form-label">RTSP URL (optional)</label><input class="form-input" id="c-rtsp" placeholder="rtsp://192.168.1.100:554/stream"></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Resolution</label><select class="form-input" id="c-res"><option>1080p</option><option>720p</option><option>4K</option></select></div><div class="form-group"><label class="form-label">FPS</label><input class="form-input" id="c-fps" type="number" value="25"></div></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-camera')">Cancel</button><button class="btn btn-primary" onclick="saveCamera()">Add camera</button></div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-area"><div class="modal"><div class="modal-title">Add area</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Zone</label><select class="form-input" id="a-zone"></select></div><div class="form-group"><label class="form-label">Area name</label><input class="form-input" id="a-name" placeholder="Arera Colony"></div></div>
+  <div class="form-group"><label class="form-label">Code</label><input class="form-input" id="a-code" placeholder="AC"></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-area')">Cancel</button><button class="btn btn-primary" onclick="saveArea()">Add area</button></div>
+</div></div>
 
-<div class="modal-overlay" id="modal-user">
-  <div class="modal"><div class="modal-title">Add user</div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Full name</label><input class="form-input" id="u-name-f" placeholder="Officer Name"></div><div class="form-group"><label class="form-label">Role</label><select class="form-input" id="u-role-f"><option value="operator">Operator</option><option value="cityadmin">City Admin</option></select></div></div>
-    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="u-email-f" type="email" placeholder="officer@city.gov.in"></div>
-    <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="u-pass-f" type="password" placeholder="Min 8 characters"></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-user')">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Add user</button></div>
+<div class="modal-overlay" id="modal-junction"><div class="modal"><div class="modal-title">Add junction</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Area</label><select class="form-input" id="j-area"></select></div><div class="form-group"><label class="form-label">Code</label><input class="form-input" id="j-code" placeholder="BPL-007"></div></div>
+  <div class="form-group"><label class="form-label">Junction name</label><input class="form-input" id="j-name" placeholder="MG Road × DB Mall"></div>
+  <div class="form-group"><label class="form-label">Location description</label><input class="form-input" id="j-loc" placeholder="Near DB Mall, MG Road"></div>
+  <div class="form-row3">
+    <div class="form-group"><label class="form-label">Min phase (s)</label><input class="form-input" id="j-min" type="number" value="15" min="5" max="60"></div>
+    <div class="form-group"><label class="form-label">Max phase (s)</label><input class="form-input" id="j-max" type="number" value="120" min="30" max="300"></div>
+    <div class="form-group"><label class="form-label">Empty road ≤ (vehicles)</label><input class="form-input" id="j-empty" type="number" value="3" min="0" max="10"></div>
   </div>
-</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Latitude</label><input class="form-input" id="j-lat" type="number" step="0.0001" placeholder="23.2340"></div><div class="form-group"><label class="form-label">Longitude</label><input class="form-input" id="j-lng" type="number" step="0.0001" placeholder="77.4340"></div></div>
+  <div class="form-group"><label class="form-label">Camera mode</label><select class="form-input" id="j-mode"><option value="simulation">Simulation</option><option value="rtsp">RTSP (live cameras)</option></select></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-junction')">Cancel</button><button class="btn btn-primary" onclick="saveJunction()">Add junction</button></div>
+</div></div>
 
-<div class="modal-overlay" id="modal-city">
-  <div class="modal"><div class="modal-title">Add city</div>
-    <div class="form-row"><div class="form-group"><label class="form-label">City name</label><input class="form-input" id="city-name-f" placeholder="Bhopal"></div><div class="form-group"><label class="form-label">State</label><input class="form-input" id="city-state-f" placeholder="Madhya Pradesh"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Country</label><input class="form-input" id="city-country-f" value="India"></div><div class="form-group"><label class="form-label">Plan</label><select class="form-input" id="city-plan-f"><option value="trial">Trial</option><option value="saas">SaaS</option><option value="license">License</option></select></div></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-city')">Cancel</button><button class="btn btn-primary" onclick="saveCity()">Add city</button></div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-camera"><div class="modal"><div class="modal-title">Add camera</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Junction</label><select class="form-input" id="c-junc"></select></div><div class="form-group"><label class="form-label">Arm</label><select class="form-input" id="c-arm"><option>North</option><option>South</option><option>East</option><option>West</option></select></div></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Camera code</label><input class="form-input" id="c-code" placeholder="BPL-001-CAM-N"></div><div class="form-group"><label class="form-label">Label</label><input class="form-input" id="c-label" placeholder="Camera North"></div></div>
+  <div class="form-group"><label class="form-label">RTSP URL (optional — for live cameras)</label><input class="form-input" id="c-rtsp" placeholder="rtsp://192.168.1.100:554/stream1"></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Resolution</label><select class="form-input" id="c-res"><option>1080p</option><option>720p</option><option>4K</option></select></div><div class="form-group"><label class="form-label">FPS</label><input class="form-input" id="c-fps" type="number" value="25"></div></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-camera')">Cancel</button><button class="btn btn-primary" onclick="saveCamera()">Add camera</button></div>
+</div></div>
 
-<div class="modal-overlay" id="modal-license">
-  <div class="modal"><div class="modal-title">Generate license key</div>
-    <div class="form-group"><label class="form-label">City</label><select class="form-input" id="lic-city"></select></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Plan</label><select class="form-input" id="lic-plan"><option value="basic">Basic (10 junctions)</option><option value="pro">Pro (50 junctions)</option><option value="enterprise">Enterprise (500 junctions)</option></select></div><div class="form-group"><label class="form-label">Validity (days)</label><input class="form-input" id="lic-days" type="number" value="365"></div></div>
-    <div class="form-group"><label class="form-label">Notes (optional)</label><input class="form-input" id="lic-notes" placeholder="e.g. Smart City Mission pilot"></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-license')">Cancel</button><button class="btn btn-primary" onclick="generateLicense()">Generate key</button></div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-timing"><div class="modal"><div class="modal-title">Add signal timing profile</div>
+  <div class="form-group"><label class="form-label">Junction</label><select class="form-input" id="tp-junc"></select></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Profile type</label><select class="form-input" id="tp-name"><option value="peak">Peak hours</option><option value="offpeak">Off-peak</option><option value="night">Night</option><option value="custom">Custom</option></select></div><div class="form-group"><label class="form-label">Active</label><select class="form-input" id="tp-active"><option value="true">Yes</option><option value="false">No</option></select></div></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Start hour (0–23)</label><input class="form-input" id="tp-start" type="number" min="0" max="23" value="8"></div><div class="form-group"><label class="form-label">End hour (0–23)</label><input class="form-input" id="tp-end" type="number" min="0" max="23" value="10"></div></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Min phase (s)</label><input class="form-input" id="tp-min" type="number" value="15"></div><div class="form-group"><label class="form-label">Max phase (s)</label><input class="form-input" id="tp-max" type="number" value="120"></div></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-timing')">Cancel</button><button class="btn btn-primary" onclick="saveTiming()">Add profile</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-user"><div class="modal"><div class="modal-title">Add user</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Full name</label><input class="form-input" id="u-name-f"></div><div class="form-group"><label class="form-label">Role</label><select class="form-input" id="u-role-f"><option value="operator">Operator</option><option value="zoneadmin">Zone admin</option><option value="cityadmin">City admin</option></select></div></div>
+  <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="u-email-f" type="email"></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Password</label><input class="form-input" id="u-pass-f" type="password" placeholder="Min 8 chars"></div><div class="form-group"><label class="form-label">Zone (optional)</label><select class="form-input" id="u-zone-f"><option value="">All zones</option></select></div></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-user')">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Add user</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-city"><div class="modal"><div class="modal-title">Add city</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">City name</label><input class="form-input" id="ct-name"></div><div class="form-group"><label class="form-label">State</label><input class="form-input" id="ct-state"></div></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Country</label><input class="form-input" id="ct-country" value="India"></div><div class="form-group"><label class="form-label">Plan</label><select class="form-input" id="ct-plan"><option value="trial">Trial</option><option value="saas">SaaS</option><option value="license">License</option></select></div></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-city')">Cancel</button><button class="btn btn-primary" onclick="saveCity()">Add city</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-license"><div class="modal"><div class="modal-title">Generate license key</div>
+  <div class="form-group"><label class="form-label">City</label><select class="form-input" id="lic-city"></select></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Plan</label><select class="form-input" id="lic-plan"><option value="basic">Basic (10 junctions)</option><option value="pro">Pro (50 junctions)</option><option value="enterprise">Enterprise (500 junctions)</option></select></div><div class="form-group"><label class="form-label">Validity (days)</label><input class="form-input" id="lic-days" type="number" value="365"></div></div>
+  <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="lic-notes" placeholder="e.g. Smart City Mission pilot"></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-license')">Cancel</button><button class="btn btn-primary" onclick="genLicense()">Generate</button></div>
+</div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="/js/shared.js"></script>

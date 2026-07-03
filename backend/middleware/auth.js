@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'signalsense-dev-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'signalsense-dev-secret';
 
 function requireAuth(req, res, next) {
   const token = (req.headers.authorization || '').replace('Bearer ', '');
@@ -14,26 +14,14 @@ function requireAuth(req, res, next) {
 
 function requireRole(...roles) {
   return [requireAuth, (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ error: `Access denied. Required role: ${roles.join(' or ')}` });
-    }
+    if (!roles.includes(req.user.role)) return res.status(403).json({ error: 'Access denied' });
     next();
   }];
 }
 
-function requireSuperAdmin() { return requireRole('superadmin'); }
-function requireCityAdmin()  { return requireRole('superadmin', 'cityadmin'); }
-function requireOperator()   { return requireRole('superadmin', 'cityadmin', 'operator'); }
+const requireSuperAdmin = () => requireRole('superadmin');
+const requireCityAdmin  = () => requireRole('superadmin', 'cityadmin');
+const requireZoneAdmin  = () => requireRole('superadmin', 'cityadmin', 'zoneadmin');
+const requireOperator   = () => requireRole('superadmin', 'cityadmin', 'zoneadmin', 'operator');
 
-// City-scope guard — non-superadmin can only access their own city
-function requireCityScope(req, res, next) {
-  if (req.user.role === 'superadmin') return next();
-  const cityId = parseInt(req.params.cityId || req.body.cityId || req.query.cityId);
-  if (cityId && cityId !== req.user.cityId) {
-    return res.status(403).json({ error: 'Access denied to this city' });
-  }
-  req.scopedCityId = req.user.cityId;
-  next();
-}
-
-module.exports = { requireAuth, requireRole, requireSuperAdmin, requireCityAdmin, requireOperator, requireCityScope, JWT_SECRET };
+module.exports = { requireAuth, requireRole, requireSuperAdmin, requireCityAdmin, requireZoneAdmin, requireOperator, JWT_SECRET };
